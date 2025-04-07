@@ -1,14 +1,17 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserModule } from './modules/auth/auth.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { FxModule } from './modules/fx/fx.module';
-import { TransactionsService } from './modules/transactions/transactions.service';
+import { ScheduleModule } from "@nestjs/schedule";
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { JwtModule, JwtModuleOptions } from '@nestjs/jwt';
 import {EventEmitterModule} from "@nestjs/event-emitter"
 import { EmailModule } from './modules/dependency/email/email.module';
 import { ConfigModule } from '@nestjs/config';
+import { WalletModule } from './modules/wallet/wallet.module';
+import { JobsModule } from './modules/jobs/jobs.module';
+import { ExchangeRatesModule } from './modules/third_party/exchange-rates/exchange-rates.module';
 
 @Module({
   imports: [
@@ -16,6 +19,7 @@ import { ConfigModule } from '@nestjs/config';
     EventEmitterModule.forRoot({
       delimiter: '.',
     }),
+    ScheduleModule.forRoot(),
     JwtModule.registerAsync({
           global: true,
       useFactory: async () => {
@@ -24,8 +28,8 @@ import { ConfigModule } from '@nestjs/config';
         }
         return res
       },
-    }),UserModule, FxModule, TransactionsModule, EmailModule],
+    }),AuthModule,WalletModule, FxModule, TransactionsModule, EmailModule, JobsModule, ExchangeRatesModule],
   controllers: [AppController],
-  providers: [AppService, TransactionsService],
+  providers: [AppService,],
 })
 export class AppModule {}

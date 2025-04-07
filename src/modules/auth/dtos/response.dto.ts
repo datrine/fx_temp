@@ -23,6 +23,10 @@ export class UserDTO {
     role?: UserRole
 }
 
+export class SignedInUserDTO extends UserDTO{
+    access_token:string
+}
+
 
 export class RegisterCreatedResponseBodyDTO extends ResponseBodyDTO {
     data: UserDTO
@@ -31,4 +35,9 @@ export class RegisterCreatedResponseBodyDTO extends ResponseBodyDTO {
 
 export class VerifyEmailOKResponseBodyDTO extends ResponseBodyDTO {
     data: UserDTO
+}
+
+
+export class SigninOkResponseBodyDTO extends ResponseBodyDTO {
+    data: SignedInUserDTO
 }

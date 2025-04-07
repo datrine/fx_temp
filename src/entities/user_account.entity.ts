@@ -1,8 +1,10 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm';
+import { UserWallet } from './user_wallet.entity';
+import { Transaction } from './transaction';
 export enum UserRole{
-  "USER",
-  "ADMIN"
+ USER= "USER",
+ ADMIN= "ADMIN"
 }
 @Entity()
 export class UserAccount {
@@ -26,4 +28,7 @@ export class UserAccount {
 
   @Column({enum:UserRole,default:UserRole.USER})
   role:UserRole
+
+  @OneToMany(()=>Transaction,(transaction)=>transaction.user)
+  transactions:Transaction[]
 }

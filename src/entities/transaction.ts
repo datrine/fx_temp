@@ -1,19 +1,21 @@
 
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Index } from 'typeorm';
 import { UserWallet } from './user_wallet.entity';
-import { CurrencyDenomination, LowerCurrencyEnum } from './enums';
+import { CurrencyDenomination, LowerCurrencyEnum, TransactionTypeEnum } from './enums';
+import { UserAccount } from './user_account.entity';
 
 @Entity()
-
-@Index(["currency", "user_account_id",], { unique: true, })
-export class WalletBalance {
+export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable:false})
-  user_account_id: number;
+  @Column({nullable:true})
+  wallet_id: number;
 
-  @Column({ enum: LowerCurrencyEnum})
+  @Column({enum:TransactionTypeEnum})
+  type:TransactionTypeEnum
+
+  @Column({ enum: LowerCurrencyEnum })
   currency: LowerCurrencyEnum;
 
   @Column({ enum: CurrencyDenomination, default: CurrencyDenomination.LOWER })
@@ -28,6 +30,6 @@ export class WalletBalance {
   @Column("timestamp", { nullable: true })
   updated_at: Date;
 
-  @ManyToOne(() => UserWallet, (wallet) => wallet.balances)
-  wallet: UserWallet
+  @ManyToOne(() => UserAccount, (user) => user.transactions)
+  user: UserAccount
 }

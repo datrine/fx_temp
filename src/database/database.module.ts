@@ -5,6 +5,7 @@ import { DataSource } from 'typeorm';
 import { DATA_SOURCE } from '../entity_provider/constant';
 import { WalletBalance } from '../entities/wallet_balance';
 import { Token } from '../entities/token.entity';
+import { Transaction } from '../entities/transaction';
 
 @Module({
     providers: [{
@@ -18,7 +19,7 @@ import { Token } from '../entities/token.entity';
                 username: process.env.DB_USERNAME,
                 password: process.env.DB_PASSWORD,
                 database: process.env.DB_NAME,
-                entities: [UserAccount, UserWallet,WalletBalance,Token
+                entities: [UserAccount, UserWallet,WalletBalance,Token,Transaction
                 ],
                 synchronize: true,
             });

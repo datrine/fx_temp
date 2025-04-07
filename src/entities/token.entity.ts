@@ -1,7 +1,7 @@
 
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 export enum TokenScope{
-  "EMAIL_VERIFICATION"
+  EMAIL_VERIFICATION="EMAIL_VERIFICATION"
 }
 @Entity()
 export class Token {

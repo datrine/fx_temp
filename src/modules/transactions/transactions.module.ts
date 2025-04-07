@@ -6,6 +6,6 @@ import { EntityProviderModule } from '../../entity_provider/entity_provider.modu
 @Module({
   imports:[EntityProviderModule],
   providers: [TransactionsService],
-  controllers: [TransactionsController]
+  controllers: [TransactionsController],exports:[TransactionsService]
 })
 export class TransactionsModule {}

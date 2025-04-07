@@ -23,3 +23,15 @@ export class VerifyEmailRequestBodyDTO{
     @IsNotEmpty()
     token:string
 }
+
+
+export class SigninRequestBodyDTO{
+    @ApiProperty({description:"email to sign in"})
+    @IsEmail()
+    email:string
+
+    
+    @ApiProperty({description:"password to sign in"})
+    @IsStrongPassword()
+    password:string
+}
