@@ -1,0 +1,1 @@
+export const UserRegisteredEvent="auth.user_registered"
