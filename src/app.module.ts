@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import {CacheModule} from "@nestjs/cache-manager"
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
@@ -11,7 +12,8 @@ import { EmailModule } from './modules/dependency/email/email.module';
 import { ConfigModule } from '@nestjs/config';
 import { WalletModule } from './modules/wallet/wallet.module';
 import { JobsModule } from './modules/jobs/jobs.module';
-import { ExchangeRatesModule } from './modules/third_party/exchange-rates/exchange-rates.module';
+import { ExchangeRatesModule } from './modules/exchange-rates/exchange-rates.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { ExchangeRatesModule } from './modules/third_party/exchange-rates/exchan
     EventEmitterModule.forRoot({
       delimiter: '.',
     }),
+    CacheModule.register({isGlobal:true}),
     ScheduleModule.forRoot(),
+    HttpModule,
     JwtModule.registerAsync({
           global: true,
       useFactory: async () => {
@@ -28,7 +32,9 @@ import { ExchangeRatesModule } from './modules/third_party/exchange-rates/exchan
         }
         return res
       },
-    }),AuthModule,WalletModule, FxModule, TransactionsModule, EmailModule, JobsModule, ExchangeRatesModule],
+    }),
+    AuthModule,
+    WalletModule, FxModule, TransactionsModule, EmailModule, JobsModule, ExchangeRatesModule],
   controllers: [AppController],
   providers: [AppService,],
 })

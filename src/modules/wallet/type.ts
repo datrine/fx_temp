@@ -1,4 +1,4 @@
-import { LowerCurrencyEnum } from "../../entities/enums";
+import { HigherCurrencyEnum, LowerCurrencyEnum } from "../../entities/enums";
 
 
 export type ResolvedCurrencyObj={
@@ -11,5 +11,14 @@ export type WalletFundedEventPayloadType={
     wallet_id:number;
     user_account_id:number;
     value:number;
-    currency:LowerCurrencyEnum
+    currency:HigherCurrencyEnum
+}
+
+
+export type CurrenciesTradedEventPayloadType={
+    wallet_id:number;
+    user_account_id:number;
+    value:number;
+    counter_currency:HigherCurrencyEnum
+    base_currency:HigherCurrencyEnum
 }

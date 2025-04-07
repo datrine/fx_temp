@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { HigherCurrencyEnum, TransactionTypeEnum } from "../../../entities/enums";
+import { CurrencyEnum, HigherCurrencyEnum, TransactionTypeEnum } from "../../../entities/enums";
 import { ResponseBodyDTO } from "../../../utils/classes";
 
 export class TransactionDTO{
@@ -12,8 +12,8 @@ export class TransactionDTO{
     @ApiProperty({type:"number"})
     value: number
     
-    @ApiProperty({enum:TransactionTypeEnum})
-    currency: HigherCurrencyEnum
+    @ApiProperty({enum:CurrencyEnum})
+    currency: string
 }
 
 export class GetTransactionsOKResponseBodyDTO extends ResponseBodyDTO{

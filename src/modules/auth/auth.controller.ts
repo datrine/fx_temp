@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Query, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, ValidationPipe } from '@nestjs/common';
 import { RegisterRequestBodyDTO, SigninRequestBodyDTO, VerifyEmailRequestBodyDTO } from './dtos/request.dto';
 import { AuthService } from './auth.service';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -22,7 +22,7 @@ export class AuthController {
         return dto
     }
 
-    @Post("send-email-verification")
+    @Get("send-email-verification")
     @ApiOperation({summary:"Send email verification token",description:"Send email verification token"})
     @ApiOkResponse({type:VerifyEmailOKResponseBodyDTO})
     async requestEmailVerification(@Query("email")email:string) {

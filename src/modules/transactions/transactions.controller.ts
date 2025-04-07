@@ -15,7 +15,7 @@ export class TransactionsController {
 
         let dto: GetTransactionsOKResponseBodyDTO = {
             statusCode: HttpStatus.OK,
-            data: resData.map(mp => ({ id: mp.id, type: mp.type, wallet_id: mp.wallet_id, ...convertLowerToHigherDenomitation({ value: mp.value, currency: mp.currency }) }))
+            data: resData.map(mp => ({ id: mp.id, type: mp.type, wallet_id: mp.wallet_id, value: mp.value, currency: mp.currency  }))
         }
         return dto
     }

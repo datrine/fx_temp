@@ -1,7 +1,7 @@
 
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, Index } from 'typeorm';
 import { UserWallet } from './user_wallet.entity';
-import { CurrencyDenomination, LowerCurrencyEnum, TransactionTypeEnum } from './enums';
+import { CurrencyDenomination, CurrencyEnum, LowerCurrencyEnum, TransactionTypeEnum } from './enums';
 import { UserAccount } from './user_account.entity';
 
 @Entity()
@@ -9,16 +9,16 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   wallet_id: number;
 
-  @Column({enum:TransactionTypeEnum})
-  type:TransactionTypeEnum
+  @Column({ enum: TransactionTypeEnum })
+  type: TransactionTypeEnum
 
-  @Column({ enum: LowerCurrencyEnum })
-  currency: LowerCurrencyEnum;
+  @Column("text")
+  currency: string;
 
-  @Column({ enum: CurrencyDenomination, default: CurrencyDenomination.LOWER })
+  @Column({ enum: CurrencyDenomination, nullable: true })
   denomination: CurrencyDenomination;
 
   @Column({ default: 0 })
