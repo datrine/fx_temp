@@ -21,6 +21,25 @@ export class ExchangeRatesService {
         this.api_key = process.env.EXCHANGERATE_API_KEY!
     }
 
+    async getPairs(){
+        let rates:Array<{first:HigherCurrencyEnum;second:HigherCurrencyEnum;rate:number}>=[]
+        let pairs:Array<[HigherCurrencyEnum,HigherCurrencyEnum]>=[
+            [HigherCurrencyEnum.NGN,HigherCurrencyEnum.EUR],
+            [HigherCurrencyEnum.NGN,HigherCurrencyEnum.USD],
+            [HigherCurrencyEnum.NGN,HigherCurrencyEnum.GBP],
+            [HigherCurrencyEnum.USD,HigherCurrencyEnum.EUR],
+            [HigherCurrencyEnum.USD,HigherCurrencyEnum.NGN],
+            [HigherCurrencyEnum.USD,HigherCurrencyEnum.GBP],
+            [HigherCurrencyEnum.GBP,HigherCurrencyEnum.USD],
+            [HigherCurrencyEnum.GBP,HigherCurrencyEnum.NGN],
+        ]
+        for(let [a,b] of pairs){
+           let rate= await this.convertCurrencies(a,b)
+           rates.push({first:a,second:b,rate})
+        }
+        return rates
+    }
+
     async convertCurrencies(from_currency: HigherCurrencyEnum, to_currency: HigherCurrencyEnum) {
         let pair_key = `${from_currency}:${to_currency}`
         let rate =Number(await this.cacheManager.get(pair_key)) 
