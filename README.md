@@ -12,6 +12,8 @@ $ yarn install
 
 ## Compile and run the project
 
+Set up environment variables as described in .env.sample file
+
 ```bash
 # development
 $ yarn run start
