@@ -25,11 +25,6 @@ export type CurrenciesTradingFailedEventPayloadType = {
 
 export type CurrenciesTradedEventPayloadType = {
     txn_id: number
-    first_trader_id: number;
-    second_trader_id: number;
-    value: number;
-    counter_currency: HigherCurrencyEnum
-    base_currency: HigherCurrencyEnum
 }
 
 

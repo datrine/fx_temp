@@ -12,38 +12,38 @@ export class Transaction {
   @Column({ nullable: true })
   wallet_id: number;
 
-  @Column({nullable:true})
-  user_account_id?:number
+  @Column({ nullable: true })
+  user_account_id?: number
 
-  
-  @Column({nullable:true})
-  initiating_trader_account_id?:number
 
-  
-  @Column({nullable:true})
-  second_trader_account_id?:number
+  @Column({ nullable: true })
+  initiating_trader_account_id?: number
+
+
+  @Column({ nullable: true })
+  second_trader_account_id?: number
 
   @Column({ enum: TransactionTypeEnum })
   type: TransactionTypeEnum
 
-  @Column({enum:TransactionStatusEnum,default:TransactionStatusEnum.COMPLETED,nullable:true})
+  @Column({ enum: TransactionStatusEnum, default: TransactionStatusEnum.COMPLETED, nullable: true })
   status: TransactionStatusEnum
 
 
   @Column({ default: 0 })
   value: number;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   currency: string;
-  
-  @Column({nullable:true})
-  rate?:number
 
-  @Column({nullable:true})
-  base_currency?:string
-  
-  @Column({nullable:true})
-  counter_currency?:string
+  @Column({ nullable: true, type: "float" })
+  rate?: number
+
+  @Column({ nullable: true })
+  base_currency?: string
+
+  @Column({ nullable: true })
+  counter_currency?: string
 
   @Column({ enum: CurrencyDenomination, nullable: true })
   denomination: CurrencyDenomination;

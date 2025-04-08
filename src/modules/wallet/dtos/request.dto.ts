@@ -14,18 +14,19 @@ export class FundWalletRequestBodyDTO{
 
 
 export class TradeCurrenciesRequestBodyDTO{
-    @ApiProperty({type:"number"})
+    @ApiProperty({type:"number",description:"id of second trader"})
     @IsNumber()
     second_trader_id:number
+
     @ApiProperty({type:"number"})
     @IsNumber()
     amount:number;
 
-    @ApiProperty({enum:HigherCurrencyEnum})
+    @ApiProperty({enum:HigherCurrencyEnum,description:"Currency to sell"})
     @IsEnum(HigherCurrencyEnum)
     base:HigherCurrencyEnum;
 
-    @ApiProperty({enum:HigherCurrencyEnum})
+    @ApiProperty({enum:HigherCurrencyEnum,description:"Currency to buy"})
     @IsEnum(HigherCurrencyEnum)
     target:HigherCurrencyEnum;
 }

@@ -25,40 +25,21 @@ export class WalletDTO {
 
 export class GetWalletOKResponseBodyDTO extends ResponseBodyDTO {
     @ApiProperty({ type: WalletDTO})
-    @IsNumber()
     data: WalletDTO
 }
 export class FundWalletOKResponseBodyDTO extends ResponseBodyDTO {
     @ApiProperty({ type: WalletDTO})
-    @IsNumber()
     data: WalletDTO
 }
 
 
-export class TradeCurrenciesRequestBodyDTO {
-    @ApiProperty({ type: "number" })
-    @IsNumber()
-    amount: number;
-
-    @ApiProperty({ enum: HigherCurrencyEnum })
-    @IsEnum(HigherCurrencyEnum)
-    base: HigherCurrencyEnum;
-
-    @ApiProperty({ enum: HigherCurrencyEnum })
-    @IsEnum(HigherCurrencyEnum)
-    target: HigherCurrencyEnum;
+export class TradeCurrenciesResponseBodyDTO extends ResponseBodyDTO {
+    @ApiProperty({ type: WalletDTO})
+    data: WalletDTO
 }
 
-export class ConvertCurrencyRequestBodyDTO {
-    @ApiProperty({ type: "number" })
-    @IsNumber()
-    amount: number;
+export class ConvertCurrencyResponseBodyDTO extends ResponseBodyDTO {
+    @ApiProperty({ type: WalletDTO})
+    data: WalletDTO
 
-    @ApiProperty({ enum: HigherCurrencyEnum })
-    @IsEnum(HigherCurrencyEnum)
-    from: HigherCurrencyEnum;
-
-    @ApiProperty({ enum: HigherCurrencyEnum })
-    @IsEnum(HigherCurrencyEnum)
-    to: HigherCurrencyEnum;
 }

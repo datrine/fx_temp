@@ -74,7 +74,7 @@ export const convertHigherToLowerDenomitation = ({ currency, value }: { value: n
         default:
             throw new Error(`cannot convert unknown currency ${currency}.`);
     }
-    return { value: value_ret, currency: currency_ret }
+    return { value: Math.round(value_ret) , currency: currency_ret }
 }
 
 export const convertLowerToHigherDenomitation = ({ currency, value }: { value: number; currency: LowerCurrencyEnum }): ({ value: number; currency: HigherCurrencyEnum }) => {

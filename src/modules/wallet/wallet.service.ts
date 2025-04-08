@@ -51,11 +51,11 @@ export class WalletService {
             counter_currency: trade_data.receiving,
             status: TransactionStatusEnum.PENDING
         })
-        let result: UserWallet
-        let exc_rate
+        let result: UserWallet | null
+        let exc_rate: number
         try {
             this.validateNumber(trade_data.amount)
-            exc_rate = await this.exchangeRateService.convertCurrencies(trade_data.sending, trade_data.receiving);
+            exc_rate = await this.exchangeRateService.convertCurrencies(trade_data.receiving, trade_data.sending);
             await this.transactionService.updateTransaction(txn.id, { rate: exc_rate })
         } catch (error) {
             let event_dto: CurrenciesTradingFailedEventPayloadType = {
@@ -64,7 +64,68 @@ export class WalletService {
             this.eventEmitter.emit(WalletCurrenciesTradingFailedEvent, event_dto)
             throw error
         }
-        return {}
+
+        try {
+            result = await this.datasource.transaction(async txMgr => {
+                let amount_sending = trade_data.amount * exc_rate
+                let amount_receiving = trade_data.amount
+                let resolved_to_send = convertHigherToLowerDenomitation({
+                    currency: trade_data.sending,
+                    value: amount_sending
+                })
+
+                let resolved_to_receive = convertHigherToLowerDenomitation({
+                    currency: trade_data.receiving,
+                    value: amount_receiving
+                })
+
+                let firstTraderWallet = await this.getOrCreateUserWallet(user_account_id, txMgr)
+                let secondTraderWallet = await this.getOrCreateUserWallet(trade_data.second_trader_id, txMgr)
+
+                // trader A
+                await this.subtractFromWalletBalance(firstTraderWallet.id, {
+                    user_account_id,
+                    currency: resolved_to_send.currency,
+                    decrement_value: resolved_to_send.value
+                }, txMgr)
+
+                await this.addToWalletBalance(firstTraderWallet.id, {
+                    user_account_id, currency: resolved_to_receive.currency,
+                    increment_value: resolved_to_receive.value
+                }, txMgr)
+
+                // trader B
+                await this.subtractFromWalletBalance(secondTraderWallet.id, {
+                    user_account_id: trade_data.second_trader_id,
+                    currency: resolved_to_receive.currency,
+                    decrement_value: resolved_to_receive.value
+                }, txMgr)
+
+                await this.addToWalletBalance(secondTraderWallet.id, {
+                    user_account_id: trade_data.second_trader_id,
+                    currency: resolved_to_send.currency,
+                    increment_value: resolved_to_send.value
+                }, txMgr)
+
+                let resolvedWallet = await this.getUserWallet(user_account_id)
+                if (!firstTraderWallet) {
+                    throw new InternalServerErrorException("something went wrong")
+                }
+                return resolvedWallet
+            })
+        } catch (error) {
+            let event_dto: CurrenciesTradingFailedEventPayloadType = {
+                txn_id: txn.id,
+            }
+            this.eventEmitter.emit(WalletCurrenciesTradingFailedEvent, event_dto)
+            throw error
+        }
+
+        let event_dto: CurrenciesTradedEventPayloadType = {
+            txn_id: txn.id,
+        }
+        this.eventEmitter.emit(WalletCurrenciesTradedEvent, event_dto)
+        return this.formatWallet(result!)
     }
 
     async convertCurrencies(user_account_id: number, amount: number, base: HigherCurrencyEnum, target: HigherCurrencyEnum) {
@@ -329,6 +390,24 @@ export class WalletService {
         return userWallet
     }
 
+    async checkBalance(wallet_id: number, currency: LowerCurrencyEnum, txn?: EntityManager) {
+        if (!txn) {
+            txn = this.datasource.manager
+        }
+        return (async (txn) => {
+            let walletBalance = await txn.getRepository(WalletBalance).findOne({
+                where: {
+                    wallet: {
+                        id: wallet_id
+                    }, currency
+                }, relations: {
+                    wallet: true,
+                }
+            });
+            return walletBalance
+        })(txn!)
+    }
+
     async addToWalletBalance(wallet_id: number, set: { user_account_id: number; currency: LowerCurrencyEnum; increment_value: number }, txn?: EntityManager) {
         if (!txn) {
             txn = this.datasource.manager
@@ -447,13 +526,6 @@ export class WalletService {
         })
     }
 
-    @OnEvent(WalletCurrenciesTradingFailedEvent, { async: true })
-    async handleCurrenciesTradingFailed(payload: CurrenciesTradedEventPayloadType) {
-        await this.transactionService.updateTransaction(payload.txn_id, {
-            wallet_id: payload.first_trader_id,
-            status: TransactionStatusEnum.FAILED,
-        })
-    }
 
     @OnEvent(WalletFundedEvent, { async: true })
     async handleWalletFunded(payload: WalletFundedEventPayloadType) {
@@ -466,8 +538,14 @@ export class WalletService {
     @OnEvent(WalletCurrenciesTradedEvent, { async: true })
     async handleCurrenciesTraded(payload: CurrenciesTradedEventPayloadType) {
         await this.transactionService.updateTransaction(payload.txn_id, {
-            wallet_id: payload.first_trader_id,
             status: TransactionStatusEnum.COMPLETED,
+        })
+    }
+    
+    @OnEvent(WalletCurrenciesTradingFailedEvent, { async: true })
+    async handleCurrenciesTradingFailed(payload: CurrenciesTradedEventPayloadType) {
+        await this.transactionService.updateTransaction(payload.txn_id, {
+            status: TransactionStatusEnum.FAILED,
         })
     }
 }
