@@ -10,5 +10,6 @@ export type SiginInUserResult={
 }&Omit<UserAccount,"password_hash">
 
 export type UserRegisteredEventPayloadType={
+    id:number;
     email:string
 }

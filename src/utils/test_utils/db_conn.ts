@@ -1,15 +1,16 @@
 import { Provider } from "@nestjs/common";
-import { PostgreSqlContainer,StartedPostgreSqlContainer } from "@testcontainers/postgresql"
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from "@testcontainers/postgresql"
 import { DATA_SOURCE } from "../../entity_provider/constant";
 import { DataSource } from "typeorm";
 import { UserAccount } from "../../entities/user_account.entity";
 import { UserWallet } from "../../entities/user_wallet.entity";
 import { WalletBalance } from "../../entities/wallet_balance";
 import { Token } from "../../entities/token.entity";
+import { Transaction } from "../../entities/transaction";
 
 export const getDbContainer = async () => {
-let container: StartedPostgreSqlContainer
-     container = await new PostgreSqlContainer().withDatabase("test").withPassword("test").withUsername("test").start();
+    let container: StartedPostgreSqlContainer
+    container = await new PostgreSqlContainer().withDatabase("test").withPassword("test").withUsername("test").start();
     return container
 }
 
@@ -23,13 +24,13 @@ export const GetDatabaseSourceProvider = (container: StartedPostgreSqlContainer)
         const password = container.getPassword()
         const db_name = container.getDatabase()
         const dataSource = new DataSource({
-            type: "mysql",
+            type: "postgres",
             host,
             port,
             username,
             password,
             database: db_name,
-            entities: [UserAccount,UserWallet,WalletBalance,Token
+            entities: [UserAccount, UserWallet, WalletBalance, Token, Transaction
             ],
             synchronize: true,
         });

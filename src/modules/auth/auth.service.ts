@@ -2,7 +2,7 @@ import { BadRequestException, ConflictException, Inject, Injectable, InternalSer
 import { UserAccount } from '../../entities/user_account.entity';
 import { TOKEN_REPOSITORY, USER_ACCOUNT_REPOSITORY } from '../../entity_provider/constant';
 import { Repository } from 'typeorm';
-import { comparePasswordWithHash, createPasswordHash, generateToken } from 'src/utils/fn';
+import { comparePasswordWithHash, createPasswordHash, generateToken } from '../../utils/fn';
 import { JWTPayload, SiginInUserResult, UserRegisteredEventPayloadType } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
@@ -11,6 +11,7 @@ import { Token, TokenScope } from '../../entities/token.entity';
 import { UserRegisteredEvent } from './events';
 import { DateTime } from 'luxon';
 import { SendEmailDTO } from '../dependency/email/dto';
+import { WalletService } from '../wallet/wallet.service';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,9 @@ export class AuthService {
         @Inject(USER_ACCOUNT_REPOSITORY) private userAccountRepository: Repository<UserAccount>,
         @Inject(TOKEN_REPOSITORY) private tokenRepository: Repository<Token>,
         private eventEmitter: EventEmitter2,
-        private jwtService: JwtService, private emailService: EmailService) { }
+        private jwtService: JwtService, 
+        private walletService: WalletService, 
+        private emailService: EmailService) { }
 
     async register({ email, password }: { email: string; password: string }) {
         let user_found = await this.userAccountRepository.findOne({ where: { email } })
@@ -32,6 +35,7 @@ export class AuthService {
             is_email_verified: false
         })
         let event_payload: UserRegisteredEventPayloadType = {
+            id:user_saved.id,
             email
         }
         this.eventEmitter.emit(UserRegisteredEvent, event_payload)
@@ -135,5 +139,6 @@ export class AuthService {
     @OnEvent(UserRegisteredEvent, { async: true })
     async handleUserRegistered(payload: UserRegisteredEventPayloadType) {
        await this.sendEmailVerificationEmail({ email: payload.email })
+       await this.walletService.createUserWallet(payload.id)
     }
 }

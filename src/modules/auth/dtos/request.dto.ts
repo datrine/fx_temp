@@ -32,6 +32,6 @@ export class SigninRequestBodyDTO{
 
     
     @ApiProperty({description:"password to sign in"})
-    @IsStrongPassword()
+    @IsNotEmpty()
     password:string
 }

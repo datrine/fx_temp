@@ -101,7 +101,6 @@ export const convertLowerToHigherDenomitation = ({ currency, value }: { value: n
         default:
             throw new Error(`cannot convert unknown currency ${currency}.`);
     }
-    console.log({ value: value_ret, currency: currency_ret })
     return { value: value_ret, currency: currency_ret }
 }
 

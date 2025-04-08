@@ -1,8 +1,10 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpStatus, Post, Query, ValidationPipe } from '@nestjs/common';
 import { RegisterRequestBodyDTO, SigninRequestBodyDTO, VerifyEmailRequestBodyDTO } from './dtos/request.dto';
 import { AuthService } from './auth.service';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RegisterCreatedResponseBodyDTO, SigninOkResponseBodyDTO, VerifyEmailOKResponseBodyDTO } from './dtos/response.dto';
+import { isEmail } from 'class-validator';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 @ApiTags("AUTH APIs")
@@ -23,9 +25,13 @@ export class AuthController {
     }
 
     @Get("send-email-verification")
+    @Throttle({ default: { limit: 3, ttl: 60000 } })
     @ApiOperation({summary:"Send email verification token",description:"Send email verification token"})
     @ApiOkResponse({type:VerifyEmailOKResponseBodyDTO})
     async requestEmailVerification(@Query("email")email:string) {
+      if (!isEmail(email)) {
+        throw new BadRequestException("query parameter must be a valid email")
+      }
       let resData=await  this.authService.sendEmailVerificationEmail({email})
       let dto:VerifyEmailOKResponseBodyDTO={
         statusCode:HttpStatus.OK,
@@ -38,7 +44,7 @@ export class AuthController {
     @Post("verify")
     @ApiOperation({summary:"Verify email address",description:"Verify email address"})
     @ApiOkResponse({type:VerifyEmailOKResponseBodyDTO})
-    async verifyEmail(@Body()bodyData:VerifyEmailRequestBodyDTO) {
+    async verifyEmail(@Body(new ValidationPipe({transform:true}))bodyData:VerifyEmailRequestBodyDTO) {
       let resData=await  this.authService.verifyEmail(bodyData)
       let dto:VerifyEmailOKResponseBodyDTO={
         statusCode:HttpStatus.OK,

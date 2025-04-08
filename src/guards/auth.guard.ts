@@ -51,7 +51,6 @@ export class AuthGuard implements CanActivate {
     if (!user) {
       throw new UnauthorizedException('User does not match jwt token');
     }
-    console.log(user)
     req.user = {
       id: payload.id,
       email: payload.email,

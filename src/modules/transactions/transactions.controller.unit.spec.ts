@@ -7,6 +7,8 @@ describe('TransactionsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TransactionsController],
+    }).useMocker(token => {
+      return jest.fn()
     }).compile();
 
     controller = module.get<TransactionsController>(TransactionsController);

@@ -1,11 +1,12 @@
 import { HttpService } from '@nestjs/axios';
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { DateTime } from 'luxon';
 import { HigherCurrencyEnum } from 'src/entities/enums';
 import { GetExchangeRatesCurrencyPairsOkResponse } from './dtos';
 import * as assert from 'assert';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class ExchangeRatesService {
@@ -43,7 +44,7 @@ export class ExchangeRatesService {
             return res.data
         } catch (error) {
             console.log(error)
-            throw new Error("Failed to get conversion rate: ")
+            throw new InternalServerErrorException("Failed to get conversion rate: ")
         }
 
     }
@@ -55,7 +56,7 @@ export class ExchangeRatesService {
             assert(res.target_code, "no 'target' field")
             assert(typeof res.conversion_rate === "number", "conversion rate must be a number")
         } catch (error) {
-            throw new Error("Return format error: ", error)
+            throw new InternalServerErrorException("Return format error: ", error)
         }
     }
 }

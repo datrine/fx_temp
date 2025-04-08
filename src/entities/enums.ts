@@ -39,3 +39,10 @@ export enum TransactionTypeEnum {
   CURRENCY_CONVERSION = "CURRENCY_CONVERSION",
   TRADING = "TRADING"
 }
+
+
+export enum TransactionStatusEnum {
+  PENDING = "PENDING",
+  FAILED = "FAILED",
+  COMPLETED = "COMPLETED"
+}

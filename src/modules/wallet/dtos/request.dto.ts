@@ -16,6 +16,9 @@ export class FundWalletRequestBodyDTO{
 export class TradeCurrenciesRequestBodyDTO{
     @ApiProperty({type:"number"})
     @IsNumber()
+    second_trader_id:number
+    @ApiProperty({type:"number"})
+    @IsNumber()
     amount:number;
 
     @ApiProperty({enum:HigherCurrencyEnum})
