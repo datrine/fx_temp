@@ -40,3 +40,4 @@ $ yarn run test:cov
 
 ## API Documentation
 [Localhost](http://localhost/docs) Fx Trading App repository.
+[PostMan] (https://www.postman.com/datrine/workspace/my-workspace/collection/41621479-580e2b36-a261-4d14-ba51-a0b2e33e9809?action=share&creator=41621479&active-environment=41621479-241d30f2-f72a-4e04-9313-5967098be611)
